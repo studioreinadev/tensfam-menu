@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tens Fam - Menú Digital</title>
+  <style>
+    :root {
+      --bg-color: #0b0b0b;
+      --card-bg: #161616;
+      --card-border: #262626;
+      --accent-color: #ff9800;
+      --accent-glow: rgba(255, 152, 0, 0.25);
+      --text-color: #ffffff;
+      --text-muted: #9e9e9e;
+      --danger-color: #ff3d00;
+      --success-color: #00e676;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      padding-bottom: 80px;
+      width: 100%;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Header & Branding */
+    header {
+      background: linear-gradient(180deg, rgba(0,0,0,0.95) 0%, rgba(18,18,18,0.9) 100%);
+      backdrop-filter: blur(10px);
+      text-align: center;
+      padding: 25px 15px 15px;
+      border-bottom: 2px solid var(--accent-color);
+      position: relative;
+    }
+
+    .brand-logo {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      margin: 0 auto 8px;
+      display: block;
+      filter: drop-shadow(0 0 10px var(--accent-glow));
+    }
+
+    header h1 {
+      color: var(--accent-color);
+      font-size: 2.2rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      line-height: 1;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 5px;
+      letter-spacing: 1px;
+    }
+
+    /* Barra de categorías dinámica (Tabs Sticky) */
+    .category-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(11, 11, 11, 0.95);
+      backdrop-filter: blur(12px);
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 12px 15px;
+      border-bottom: 1px solid var(--card-border);
+      scrollbar-width: none;
+    }
+
+    .category-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .cat-btn {
+      background: #1a1a1a;
+      color: var(--text-muted);
+      border: 1px solid var(--card-border);
+      padding: 8px 16px;
+      border-radius: 25px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .cat-btn.active, .cat-btn:active {
+      background: var(--accent-color);
+      color: #000;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+
+    /* Main Grid Layout - Pantalla Completa Dinámica */
+    .main-wrapper {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 15px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 800;
+      margin: 30px 0 15px;
+      color: var(--accent-color);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      scroll-margin-top: 70px;
+    }
+
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 15px;
+    }
+
+    /* Tarjetas de producto tipo App */
+    .menu-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-2px);
+      border-color: #333;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+
+    .menu-item.agotado {
+      opacity: 0.45;
+      filter: grayscale(80%);
+    }
+
+    .menu-item.agotado::after {
+      content: 'AGOTADO';
+      position: absolute;
+      top: 18px;
+      right: -32px;
+      background: var(--danger-color);
+      color: white;
+      font-weight: 900;
+      padding: 3px 35px;
+      transform: rotate(30deg);
+      font-size: 0.7rem;
+      letter-spacing: 1px;
+    }
+
+    .item-img {
+      width: 85px;
+      height: 85px;
+      border-radius: 12px;
+      object-fit: cover;
+      background-color: #222;
+      flex-shrink: 0;
+    }
+
+    .item-details {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .item-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 4px;
+    }
+
+    .item-desc {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.3;
+      margin-bottom: 8px;
+    }
+
+    .item-price {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--accent-color);
+    }
+
+    /* Salsas Grid */
+    .sauce-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .sauce-badge {
+      background: #1c1c1c;
+      color: var(--text-color);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: 1px solid var(--card-border);
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Controles Admin */
+    .admin-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--accent-color);
+      color: #000;
+      border: none;
+      padding: 14px 22px;
+      border-radius: 30px;
+      font-weight: 800;
+      box-shadow: 0 4px 15px var(--accent-glow);
+      cursor: pointer;
+      z-index: 200;
+      transition: transform 0.2s;
+    }
+
+    .admin-btn:active {
+      transform: scale(0.95);
+    }
+
+    .admin-controls {
+      display: none;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed #333;
+    }
+
+    body.admin-mode .admin-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 48px;
+      height: 26px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--danger-color);
+      transition: .3s;
+      border-radius: 26px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 20px;
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--success-color);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(22px);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="img/logo.png" alt="Tens Fam Logo" class="brand-logo" onerror="this.style.display='none'">
+    <h1>TENS FAM</h1>
+    <p>COMIDA RÁPIDA | MENÚ DIGITAL</p>
+  </header>
+
+  <!-- Navegación táctil por categorías -->
+  <nav class="category-nav">
+    <button class="cat-btn active" onclick="scrollToSection('sec-combos')">💥 Combos</button>
+    <button class="cat-btn" onclick="scrollToSection('sec-burgers')">🍔 Hamburguesas</button>
+    <button class="cat-btn" onclick="scrollToSection('sec-hotdogs')">🌭 Hot Dogs</button>
+    <button class="cat-btn" onclick="scrollToSection('sec-sandwiches')">🥪 Sándwiches</button>
+    <button class="cat-btn" onclick="scrollToSection('sec-snacks')">🍟 Snacks & Patatas</button>
+    <button class="cat-btn" onclick="scrollToSection('sec-salsas')">🥫 Salsas</button>
+  </nav>
+
+  <div class="main-wrapper" id="menu-container"></div>
+
+  <button class="admin-btn" onclick="toggleAdminMode()">⚙️ Modo Admin</button>
+
+  <script>
+    const defaultMenu = [
+      {
+        idSec: "sec-combos",
+        categoria: "💥 COMBOS",
+        items: [
+          { id: "c1", nombre: "Combo Burger", desc: "Burger + Patata + Bebida", precio: "9,99 €", img: "img/combo-burger.jpg", disponible: true },
+          { id: "c2", nombre: "Combo Hot Dog", desc: "Hot Dog + Patata + Bebida", precio: "7,50 €", img: "img/combo-hotdog.jpg", disponible: true },
+          { id: "c3", nombre: "Combo Pizza", desc: "Porción de Pizza + Bebida", precio: "3,99 €", img: "img/combo-pizza.jpg", disponible: true },
+          { id: "c4", nombre: "Combo Nuggets", desc: "Nuggets + Bebida", precio: "4,80 €", img: "img/combo-nuggets.jpg", disponible: true }
+        ]
+      },
+      {
+        idSec: "sec-burgers",
+        categoria: "🍔 HAMBURGUESAS",
+        items: [
+          { id: "h1", nombre: "Clásica", desc: "Pan de semillas, ternera, lechuga, tomate, queso cheddar, bacon, pepinillo, ketchup", precio: "6,30 €", img: "img/burger-clasica.jpg", disponible: true },
+          { id: "h2", nombre: "Mollete", desc: "Pan mollete, ternera, bacon, queso edam, lechuga, tomate, mayonesa", precio: "6,60 €", img: "img/burger-mollete.jpg", disponible: true },
+          { id: "h3", nombre: "Pollete", desc: "Pan de semillas, pollo crispy, lechuga, tomate, mayonesa", precio: "6,60 €", img: "img/burger-pollete.jpg", disponible: true },
+          { id: "h4", nombre: "Americana", desc: "Pan de semillas, ternera, bacon, queso cheddar, lechuga, tomate, mayonesa", precio: "6,60 €", img: "img/burger-americana.jpg", disponible: true },
+          { id: "h5", nombre: "Ranchera", desc: "Pan de semillas, ternera, bacon, huevo, tomate, mayonesa, alioli con cilantro (salsa verde)", precio: "6,60 €", img: "img/burger-ranchera.jpg", disponible: true },
+          { id: "h6", nombre: "3 Quesos", desc: "Pan de semillas, ternera, bacon, queso cheddar, queso edam, queso gouda, salsa cheddar", precio: "6,60 €", img: "img/burger-3quesos.jpg", disponible: true },
+          { id: "h7", nombre: "BBQ", desc: "Pan de semillas, ternera, lechuga, cebolla caramelizada, salsa BBQ", precio: "6,60 €", img: "img/burger-bbq.jpg", disponible: true }
+        ]
+      },
+      {
+        idSec: "sec-hotdogs",
+        categoria: "🌭 HOT DOGS",
+        items: [
+          { id: "hd1", nombre: "Clásic", desc: "Frankfurt, mostaza, ketchup", precio: "3,30 €", img: "img/hd-clasic.jpg", disponible: true },
+          { id: "hd2", nombre: "Especial", desc: "Frankfurt, pepinillo, mayonesa", precio: "3,30 €", img: "img/hd-especial.jpg", disponible: true },
+          { id: "hd3", nombre: "Mayor", desc: "Frankfurt, patatas crujientes, mayonesa, ketchup", precio: "3,90 €", img: "img/hd-mayor.jpg", disponible: true },
+          { id: "hd4", nombre: "BBQ", desc: "Frankfurt, cebolla crujiente, salsa BBQ, queso rallado", precio: "4,00 €", img: "img/hd-bbq.jpg", disponible: true },
+          { id: "hd5", nombre: "Tens Fam", desc: "Frankfurt, cebolla caramelizada, pepinillo, mostaza, ketchup", precio: "3,90 €", img: "img/hd-tensfam.jpg", disponible: true },
+          { id: "hd6", nombre: "Amostazado", desc: "Frankfurt, cebolla caramelizada, bacon, mostaza miel", precio: "4,00 €", img: "img/hd-amostazado.jpg", disponible: true },
+          { id: "hd7", nombre: "Venezolano", desc: "Frankfurt, col, cebolla cruda, patatas pajas, queso rallado, variedad en salsas", precio: "4,70 €", img: "img/hd-venezolano.jpg", disponible: true }
+        ]
+      },
+      {
+        idSec: "sec-sandwiches",
+        categoria: "🥪 SANDWICHES",
+        items: [
+          { id: "sw1", nombre: "Mixto", desc: "York, queso edam y mayonesa", precio: "3,50 €", img: "img/sw-mixto.jpg", disponible: true },
+          { id: "sw2", nombre: "Con Huevo", desc: "York, queso edam, huevo, tomate y mayonesa", precio: "4,60 €", img: "img/sw-huevo.jpg", disponible: true }
+        ]
+      },
+      {
+        idSec: "sec-snacks",
+        categoria: "🍟 ESPECIALES & SNACKS",
+        items: [
+          { id: "s1", nombre: "Club House", desc: "Pollo, york, queso edam, lechuga, tomate, huevo, mayonesa + patatas", precio: "8,50 €", img: "img/club-house.jpg", disponible: true },
+          { id: "s2", nombre: "Tequeños (4 u.)", desc: "Bastoncitos de masa de trigo rellenos de queso blanco derretido. ¡El antojo perfecto!", precio: "5,00 €", img: "img/tequenos.jpg", disponible: true },
+          { id: "s3", nombre: "Fingers de Queso (4 u.)", desc: "Crujientes fingers relleno de queso", precio: "3,50 €", img: "img/fingers.jpg", disponible: true },
+          { id: "s5", nombre: "Nuggets (6 u.)", desc: "Crujientes bocados de pollo empanado", precio: "3,30 €", img: "img/nuggets.jpg", disponible: true },
+          { id: "s6", nombre: "Aros de Cebolla (7 u.)", desc: "Aros de cebolla rebozados y dorados", precio: "3,30 €", img: "img/aros-cebolla.jpg", disponible: true },
+          { id: "s7", nombre: "Alitas de Pollo (4 u.)", desc: "Jugosas alitas de pollo fritas", precio: "4,60 €", img: "img/alitas.jpg", disponible: true },
+          { id: "s4_p", nombre: "Patatas Pequeñas", desc: "Ración pequeña de patatas fritas. Incluye hasta 3 salsas a elección al fallo.", precio: "1,50 €", img: "img/patatas.jpg", disponible: true },
+          { id: "s4_m", nombre: "Patatas Medianas", desc: "Ración mediana de patatas fritas. Incluye hasta 3 salsas a elección al fallo.", precio: "2,60 €", img: "img/patatas.jpg", disponible: true },
+          { id: "s4_g", nombre: "Patatas Grandes", desc: "Ración grande de patatas fritas. Incluye hasta 3 salsas a elección al fallo.", precio: "5,00 €", img: "img/patatas.jpg", disponible: true }
+        ]
+      }
+    ];
+
+    const salsasDisponibles = [
+      "Ketchup", "Mayonesa", "Mostaza", "Mostaza Miel",
+      "Cheddar", "Kebab / Yogurt", "Barbacoa", 
+      "Alioli con cilantro (Salsa Verde)", "Picante"
+    ];
+
+    let menuState = JSON.parse(localStorage.getItem('tensfam_menu_state')) || {};
+    let isAdmin = false;
+
+    function renderMenu() {
+      const container = document.getElementById('menu-container');
+      container.innerHTML = '';
+
+      defaultMenu.forEach(cat => {
+        const catTitle = document.createElement('h2');
+        catTitle.className = 'section-title';
+        catTitle.id = cat.idSec;
+        catTitle.innerText = cat.categoria;
+        container.appendChild(catTitle);
+
+        const grid = document.createElement('div');
+        grid.className = 'grid-container';
+
+        cat.items.forEach(item => {
+          const isDisp = menuState[item.id] !== undefined ? menuState[item.id] : item.disponible;
+          
+          const card = document.createElement('div');
+          card.className = `menu-item ${isDisp ? '' : 'agotado'}`;
+          card.innerHTML = `
+            <img src="${item.img}" class="item-img" alt="${item.nombre}" onerror="this.style.display='none'">
+            <div class="item-details">
+              <div class="item-title">${item.nombre}</div>
+              <div class="item-desc">${item.desc}</div>
+              <div class="item-price">${item.precio}</div>
+              <div class="admin-controls">
+                <span style="font-size:0.8rem">${isDisp ? 'Disponible' : 'Agotado'}</span>
+                <label class="toggle-switch">
+                  <input type="checkbox" ${isDisp ? 'checked' : ''} onchange="toggleDisponibilidad('${item.id}', this.checked)">
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        container.appendChild(grid);
+      });
+
+      // Sección Salsas
+      const sauceTitle = document.createElement('h2');
+      sauceTitle.className = 'section-title';
+      sauceTitle.id = 'sec-salsas';
+      sauceTitle.innerText = '🥫 SALSAS DISPONIBLES';
+      container.appendChild(sauceTitle);
+
+      const sauceContainer = document.createElement('div');
+      sauceContainer.className = 'sauce-grid';
+      salsasDisponibles.forEach(salsa => {
+        const badge = document.createElement('div');
+        badge.className = 'sauce-badge';
+        badge.innerText = salsa;
+        sauceContainer.appendChild(badge);
+      });
+      container.appendChild(sauceContainer);
+    }
+
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function toggleDisponibilidad(id, status) {
+      menuState[id] = status;
+      localStorage.setItem('tensfam_menu_state', JSON.stringify(menuState));
+      renderMenu();
+    }
+
+    function toggleAdminMode() {
+      if (!isAdmin) {
+        const pass = prompt("Introduce el PIN de administración:");
+        if (pass === "20309906") { // PIN por defecto
+          isAdmin = true;
+          document.body.classList.add('admin-mode');
+          alert("Modo Admin activado");
+        } else {
+          alert("PIN incorrecto");
+        }
+      } else {
+        isAdmin = false;
+        document.body.classList.remove('admin-mode');
+      }
+      renderMenu();
+    }
+
+    renderMenu();
+  </script>
+</body>
+</html>
